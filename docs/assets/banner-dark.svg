@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 180" width="720" height="180">
+  <defs>
+    <linearGradient id="bg-dark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1e293b;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="accent-dark" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#7C3AED" />
+      <stop offset="50%" style="stop-color:#3B82F6" />
+      <stop offset="100%" style="stop-color:#06B6D4" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="720" height="180" rx="16" fill="url(#bg-dark)" />
+
+  <!-- Accent bar -->
+  <rect y="0" width="720" height="4" rx="2" fill="url(#accent-dark)" />
+
+  <!-- Subtle grid pattern -->
+  <g opacity="0.03">
+    <line x1="0" y1="30" x2="720" y2="30" stroke="#fff" stroke-width="0.5"/>
+    <line x1="0" y1="60" x2="720" y2="60" stroke="#fff" stroke-width="0.5"/>
+    <line x1="0" y1="90" x2="720" y2="90" stroke="#fff" stroke-width="0.5"/>
+    <line x1="0" y1="120" x2="720" y2="120" stroke="#fff" stroke-width="0.5"/>
+    <line x1="0" y1="150" x2="720" y2="150" stroke="#fff" stroke-width="0.5"/>
+  </g>
+
+  <!-- Flask icon -->
+  <g transform="translate(80, 50)">
+    <!-- Flask body -->
+    <path d="M25 10 L25 55 L5 90 Q2 96 8 96 L62 96 Q68 96 65 90 L45 55 L45 10 Z"
+          fill="none" stroke="#A78BFA" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Flask top -->
+    <line x1="18" y1="10" x2="52" y2="10" stroke="#A78BFA" stroke-width="3" stroke-linecap="round"/>
+    <!-- Liquid glow -->
+    <path d="M12 75 L58 75 L65 90 Q68 96 62 96 L8 96 Q2 96 5 90 Z" fill="#7C3AED" opacity="0.25"/>
+    <!-- Bubbles -->
+    <circle cx="30" cy="80" r="3" fill="#A78BFA" opacity="0.4"/>
+    <circle cx="42" cy="72" r="2" fill="#60A5FA" opacity="0.4"/>
+    <circle cx="35" cy="68" r="2.5" fill="#22D3EE" opacity="0.4"/>
+    <!-- Level line -->
+    <line x1="12" y1="55" x2="58" y2="55" stroke="#A78BFA" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.3"/>
+  </g>
+
+  <!-- Title -->
+  <text x="195" y="80" font-family="'Segoe UI', system-ui, -apple-system, sans-serif" font-size="42" font-weight="700" fill="#f1f5f9">
+    Open<tspan fill="#A78BFA">Bench</tspan> OS
+  </text>
+
+  <!-- Subtitle -->
+  <text x="195" y="115" font-family="'Segoe UI', system-ui, -apple-system, sans-serif" font-size="16" font-weight="400" fill="#94a3b8">
+    The Protocol Runtime Platform for Physical Labs
+  </text>
+
+  <!-- Tech pills -->
+  <g transform="translate(195, 130)">
+    <rect x="0" y="0" width="60" height="22" rx="11" fill="#7C3AED" opacity="0.2"/>
+    <text x="30" y="15" font-family="'Segoe UI', monospace" font-size="10" font-weight="600" fill="#A78BFA" text-anchor="middle">Opus 4.7</text>
+
+    <rect x="68" y="0" width="55" height="22" rx="11" fill="#3B82F6" opacity="0.2"/>
+    <text x="95" y="15" font-family="'Segoe UI', monospace" font-size="10" font-weight="600" fill="#60A5FA" text-anchor="middle">Next.js</text>
+
+    <rect x="131" y="0" width="55" height="22" rx="11" fill="#06B6D4" opacity="0.2"/>
+    <text x="158" y="15" font-family="'Segoe UI', monospace" font-size="10" font-weight="600" fill="#22D3EE" text-anchor="middle">Tauri 2</text>
+
+    <rect x="194" y="0" width="55" height="22" rx="11" fill="#10B981" opacity="0.2"/>
+    <text x="221" y="15" font-family="'Segoe UI', monospace" font-size="10" font-weight="600" fill="#34D399" text-anchor="middle">FastAPI</text>
+
+    <rect x="257" y="0" width="72" height="22" rx="11" fill="#F59E0B" opacity="0.2"/>
+    <text x="293" y="15" font-family="'Segoe UI', monospace" font-size="10" font-weight="600" fill="#FBBF24" text-anchor="middle">PostgreSQL</text>
+  </g>
+
+  <!-- Decorative glows -->
+  <circle cx="640" cy="45" r="25" fill="#7C3AED" opacity="0.08"/>
+  <circle cx="670" cy="80" r="18" fill="#3B82F6" opacity="0.08"/>
+  <circle cx="630" cy="110" r="12" fill="#06B6D4" opacity="0.08"/>
+  <circle cx="680" cy="130" r="20" fill="#10B981" opacity="0.08"/>
+</svg>
