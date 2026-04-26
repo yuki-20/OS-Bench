@@ -1,0 +1,48 @@
+node_modules/
+.next/
+out/
+dist/
+build/
+.turbo/
+.cache/
+.DS_Store
+*.log
+*.tsbuildinfo
+
+.env
+.env.local
+.env.*.local
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Tauri
+apps/bench-desktop/src-tauri/target/
+apps/bench-desktop/src-tauri/gen/
+apps/bench-desktop/src-tauri/Cargo.lock
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Local data
+.local/
+data/
+postgres-data/
+minio-data/
+redis-data/
+attachments/
+*.sqlite
+*.sqlite3
+
+# Coverage
+coverage/
+.nyc_output/
+htmlcov/

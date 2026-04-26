@@ -1,0 +1,41 @@
+**/node_modules
+**/.next
+**/dist
+**/build
+**/.turbo
+**/.cache
+**/.venv
+**/__pycache__
+**/.pytest_cache
+**/.mypy_cache
+**/.ruff_cache
+**/coverage
+**/htmlcov
+
+# Tauri
+apps/bench-desktop/src-tauri/target
+
+# Local dev volumes
+data
+postgres-data
+minio-data
+redis-data
+attachments
+
+# IDE & OS
+.vscode
+.idea
+*.swp
+.DS_Store
+
+# Source control & docs (kept out of build context)
+.git
+.gitignore
+
+# Env (use --env-file at compose time)
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log

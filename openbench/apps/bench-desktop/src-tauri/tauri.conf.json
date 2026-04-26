@@ -1,0 +1,44 @@
+{
+  "$schema": "https://schema.tauri.app/config/2.0.0",
+  "productName": "OpenBench Bench Runtime",
+  "version": "1.0.0",
+  "identifier": "com.openbench.bench",
+  "build": {
+    "beforeBuildCommand": "",
+    "beforeDevCommand": "",
+    "frontendDist": "../public",
+    "devUrl": "http://localhost:3000/app"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "OpenBench Bench Runtime",
+        "width": 1280,
+        "height": 800,
+        "minWidth": 960,
+        "minHeight": 640,
+        "resizable": true,
+        "fullscreen": false,
+        "url": "http://localhost:3000/app"
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["msi", "nsis", "deb", "appimage", "dmg"],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/icon.ico",
+      "icons/icon.icns"
+    ],
+    "windows": {
+      "wix": {
+        "language": "en-US"
+      }
+    }
+  }
+}

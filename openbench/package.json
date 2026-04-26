@@ -1,0 +1,23 @@
+{
+  "name": "openbench-os",
+  "version": "1.0.0",
+  "private": true,
+  "description": "OpenBench OS — protocol execution runtime for lab work.",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "pnpm --filter @openbench/web dev",
+    "build": "pnpm --filter @openbench/web build",
+    "start": "pnpm --filter @openbench/web start",
+    "lint": "pnpm --filter @openbench/web lint",
+    "typecheck": "pnpm -r typecheck",
+    "tauri:dev": "pnpm --filter @openbench/bench-desktop tauri dev",
+    "tauri:build": "pnpm --filter @openbench/bench-desktop tauri build"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "pnpm@9.0.0"
+}

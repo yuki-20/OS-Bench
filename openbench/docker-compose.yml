@@ -1,0 +1,187 @@
+name: openbench
+
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-openbench}
+      POSTGRES_USER: ${POSTGRES_USER:-openbench}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-openbench}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-openbench} -d ${POSTGRES_DB:-openbench}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  minio:
+    image: minio/minio:latest
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${S3_ACCESS_KEY:-minio}
+      MINIO_ROOT_PASSWORD: ${S3_SECRET_KEY:-minio12345}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - miniodata:/data
+
+  minio-init:
+    image: minio/mc:latest
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      until mc alias set local http://minio:9000 ${S3_ACCESS_KEY:-minio} ${S3_SECRET_KEY:-minio12345}; do
+        echo 'waiting for minio...'; sleep 2;
+      done;
+      mc mb -p local/${S3_BUCKET:-openbench} || true;
+      mc anonymous set download local/${S3_BUCKET:-openbench} || true;
+      exit 0;
+      "
+
+  api:
+    build:
+      context: .
+      dockerfile: infra/docker/api.Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_started
+    environment:
+      APP_ENV: ${APP_ENV:-development}
+      APP_BASE_URL: ${APP_BASE_URL:-http://localhost:3000}
+      JWT_SECRET: ${JWT_SECRET:-change-me-please}
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB:-openbench}
+      POSTGRES_USER: ${POSTGRES_USER:-openbench}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-openbench}
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/1
+      CELERY_RESULT_BACKEND: redis://redis:6379/2
+      S3_ENDPOINT_URL: http://minio:9000
+      S3_PUBLIC_BASE_URL: ${S3_PUBLIC_BASE_URL:-http://localhost:9000}
+      S3_BUCKET: ${S3_BUCKET:-openbench}
+      S3_ACCESS_KEY: ${S3_ACCESS_KEY:-minio}
+      S3_SECRET_KEY: ${S3_SECRET_KEY:-minio12345}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      ANTHROPIC_MODEL: ${ANTHROPIC_MODEL:-claude-opus-4-7}
+      ANTHROPIC_FAST_MODEL: ${ANTHROPIC_FAST_MODEL:-claude-opus-4-7}
+      ANTHROPIC_VISION_MODEL: ${ANTHROPIC_VISION_MODEL:-claude-opus-4-7}
+      ANTHROPIC_MAX_TOKENS: ${ANTHROPIC_MAX_TOKENS:-64000}
+      ANTHROPIC_BETA: ${ANTHROPIC_BETA:-}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000,tauri://localhost}
+      SEED_ORG_NAME: ${SEED_ORG_NAME:-Demo Lab}
+      SEED_ORG_SLUG: ${SEED_ORG_SLUG:-demo-lab}
+      SEED_REVIEWER_EMAIL: ${SEED_REVIEWER_EMAIL:-reviewer@demo.lab}
+      SEED_OPERATOR_EMAIL: ${SEED_OPERATOR_EMAIL:-operator@demo.lab}
+      SEED_ADMIN_EMAIL: ${SEED_ADMIN_EMAIL:-admin@demo.lab}
+      SEED_PASSWORD: ${SEED_PASSWORD:-Bench!Demo1}
+      WEBHOOK_SIGNING_SECRET: ${WEBHOOK_SIGNING_SECRET:-replace-me}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USERNAME: ${SMTP_USERNAME:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      SMTP_USE_TLS: ${SMTP_USE_TLS:-true}
+      SMTP_FROM_ADDRESS: ${SMTP_FROM_ADDRESS:-openbench@localhost}
+      SMTP_FROM_NAME: ${SMTP_FROM_NAME:-OpenBench OS}
+      MAX_DOCUMENT_UPLOAD_BYTES: ${MAX_DOCUMENT_UPLOAD_BYTES:-26214400}
+      MAX_ATTACHMENT_UPLOAD_BYTES: ${MAX_ATTACHMENT_UPLOAD_BYTES:-10485760}
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./services/api:/app
+      - apicache:/root/.cache
+
+  worker:
+    build:
+      context: .
+      dockerfile: infra/docker/api.Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_started
+    command: celery -A app.workers.celery_app:celery worker --loglevel=info --concurrency=2
+    environment:
+      APP_ENV: ${APP_ENV:-development}
+      JWT_SECRET: ${JWT_SECRET:-change-me-please}
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB:-openbench}
+      POSTGRES_USER: ${POSTGRES_USER:-openbench}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-openbench}
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/1
+      CELERY_RESULT_BACKEND: redis://redis:6379/2
+      S3_ENDPOINT_URL: http://minio:9000
+      S3_PUBLIC_BASE_URL: ${S3_PUBLIC_BASE_URL:-http://localhost:9000}
+      S3_BUCKET: ${S3_BUCKET:-openbench}
+      S3_ACCESS_KEY: ${S3_ACCESS_KEY:-minio}
+      S3_SECRET_KEY: ${S3_SECRET_KEY:-minio12345}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      ANTHROPIC_MODEL: ${ANTHROPIC_MODEL:-claude-opus-4-7}
+      ANTHROPIC_FAST_MODEL: ${ANTHROPIC_FAST_MODEL:-claude-opus-4-7}
+      ANTHROPIC_VISION_MODEL: ${ANTHROPIC_VISION_MODEL:-claude-opus-4-7}
+      ANTHROPIC_MAX_TOKENS: ${ANTHROPIC_MAX_TOKENS:-64000}
+      ANTHROPIC_BETA: ${ANTHROPIC_BETA:-}
+      WEBHOOK_SIGNING_SECRET: ${WEBHOOK_SIGNING_SECRET:-replace-me}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USERNAME: ${SMTP_USERNAME:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      SMTP_USE_TLS: ${SMTP_USE_TLS:-true}
+      SMTP_FROM_ADDRESS: ${SMTP_FROM_ADDRESS:-openbench@localhost}
+      SMTP_FROM_NAME: ${SMTP_FROM_NAME:-OpenBench OS}
+    volumes:
+      - ./services/api:/app
+      - apicache:/root/.cache
+
+  web:
+    build:
+      context: .
+      dockerfile: infra/docker/web.Dockerfile
+      args:
+        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:8000}
+        NEXT_PUBLIC_APP_NAME: ${NEXT_PUBLIC_APP_NAME:-OpenBench OS}
+    restart: unless-stopped
+    depends_on:
+      - api
+    environment:
+      API_BASE_URL_INTERNAL: http://api:8000
+      NODE_ENV: production
+      PORT: 3000
+    ports:
+      - "3000:3000"
+
+volumes:
+  pgdata:
+  redisdata:
+  miniodata:
+  apicache:

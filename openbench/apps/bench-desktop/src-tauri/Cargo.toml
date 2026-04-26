@@ -1,0 +1,24 @@
+[package]
+name = "openbench-bench-desktop"
+version = "1.0.0"
+description = "OpenBench OS — Bench Runtime Desktop Client"
+authors = ["OpenBench"]
+edition = "2021"
+rust-version = "1.77"
+
+[lib]
+name = "openbench_bench_desktop_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2.0", features = [] }
+
+[dependencies]
+serde_json = "1"
+serde = { version = "1", features = ["derive"] }
+tauri = { version = "2.0", features = [] }
+tauri-plugin-shell = "2.0"
+
+[features]
+default = ["custom-protocol"]
+custom-protocol = ["tauri/custom-protocol"]

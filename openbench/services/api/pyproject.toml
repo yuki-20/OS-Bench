@@ -1,0 +1,12 @@
+[project]
+name = "openbench-api"
+version = "1.0.0"
+description = "OpenBench OS API gateway, domain services, and AI pipelines."
+requires-python = ">=3.11"
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"

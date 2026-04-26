@@ -1,0 +1,9 @@
+{
+  "name": "OpenBench OS",
+  "short_name": "OpenBench",
+  "start_url": "/app",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#1e1b4b",
+  "icons": []
+}

@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light dark;
+}
+
+html, body { height: 100%; }
+body {
+  @apply bg-ink-50 text-ink-900 antialiased;
+  font-feature-settings: "ss01", "cv11";
+}
+
+[data-theme="hi-contrast"] body {
+  @apply bg-black text-yellow-300;
+}
+[data-theme="hi-contrast"] a, [data-theme="hi-contrast"] button {
+  @apply text-yellow-200;
+}
+[data-large-text="true"] body {
+  font-size: 18px;
+}
+[data-critical-only="true"] .non-critical {
+  display: none !important;
+}
+
+/* Markdown content (handover preview) */
+.prose-handover h1 { @apply text-2xl font-bold border-b border-ink-200 pb-2 mb-4; }
+.prose-handover h2 { @apply text-lg font-semibold mt-6 mb-2 text-brand-700; }
+.prose-handover h3 { @apply text-base font-semibold mt-4 mb-1; }
+.prose-handover ul { @apply list-disc pl-6 my-2; }
+.prose-handover ol { @apply list-decimal pl-6 my-2; }
+.prose-handover code { @apply font-mono text-xs bg-ink-100 px-1 rounded; }
+.prose-handover blockquote { @apply border-l-4 border-warn-400 bg-warn-50 px-3 py-2 my-3; }
+.prose-handover li { @apply my-0.5; }
+.prose-handover p { @apply my-2; }
+
+/* Subtle scrollbars */
+.scroll-soft::-webkit-scrollbar { height: 6px; width: 6px; }
+.scroll-soft::-webkit-scrollbar-thumb { @apply bg-ink-300 rounded; }
+
+/* Tap targets for bench mode */
+.bench-target { min-height: 56px; padding: 12px 16px; }

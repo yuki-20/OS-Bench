@@ -1,0 +1,76 @@
+# --- Secrets / env ---
+.env
+.env.local
+.env.*.local
+*.env
+*.env.local
+!.env.example
+!*.env.example
+!.env.local.example
+
+# --- Node ---
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+.pnpm-store/
+
+# --- Next.js ---
+.next/
+out/
+next-env.d.ts
+
+# --- Vite / build output ---
+dist/
+build/
+.vite/
+
+# --- TypeScript ---
+*.tsbuildinfo
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+env/
+ENV/
+
+# --- Local data / runtime ---
+.local/
+*.sqlite3
+*.sqlite3-journal
+
+# --- Logs ---
+*.log
+*-dev.err.log
+*-dev.out.log
+
+# --- IDE / OS ---
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Coverage / misc ---
+coverage/
+.nyc_output/
+.cache/
+
+# --- Tauri build artifacts ---
+src-tauri/target/
+
+# --- Docker volumes (just in case) ---
+pgdata/
+redisdata/
+miniodata/
+apicache/
