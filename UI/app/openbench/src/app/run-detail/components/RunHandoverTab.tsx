@@ -2,7 +2,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { Download, FileText, AlertTriangle, Sparkles } from 'lucide-react';
-import { ApiError, API_BASE_URL, apiRequest } from '@/lib/api';
+import { ApiError, API_BASE_URL, apiRequest, tokenStore } from '@/lib/api';
 import { useRunDetail } from './RunDetailContext';
 
 interface HandoverPayload {
@@ -78,9 +78,44 @@ export default function RunHandoverTab() {
     }
   };
 
-  const downloadPdf = () => {
+  const downloadPdf = async () => {
     if (!runId) return;
-    window.open(`${API_BASE_URL}/api/runs/${runId}/handover/pdf`, '_blank');
+    setBusy('pdf');
+    try {
+      const access = tokenStore.getAccess();
+      const orgId = tokenStore.getOrgId();
+      if (!access) throw new Error('Not signed in');
+      const res = await fetch(`${API_BASE_URL}/api/runs/${runId}/handover/pdf`, {
+        headers: {
+          Authorization: `Bearer ${access}`,
+          ...(orgId ? { 'X-Org-Id': orgId } : {}),
+        },
+      });
+      if (!res.ok) {
+        let detail = `PDF download failed (${res.status})`;
+        try {
+          const body = await res.json();
+          if (body?.detail) detail = String(body.detail);
+        } catch {
+          // ignore
+        }
+        throw new Error(detail);
+      }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `handover-${runId}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      toast.success('Handover PDF downloaded');
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to download PDF');
+    } finally {
+      setBusy(null);
+    }
   };
 
   if (!detail) return null;
@@ -111,9 +146,10 @@ export default function RunHandoverTab() {
           {handover && (
             <button
               onClick={downloadPdf}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-800 border border-border rounded-lg text-[12px] font-medium text-foreground hover:bg-zinc-700 transition-all active:scale-95"
+              disabled={busy !== null}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-800 border border-border rounded-lg text-[12px] font-medium text-foreground hover:bg-zinc-700 transition-all active:scale-95 disabled:opacity-50"
             >
-              <Download size={13} /> PDF
+              <Download size={13} /> {busy === 'pdf' ? 'Downloading…' : 'PDF'}
             </button>
           )}
         </div>
